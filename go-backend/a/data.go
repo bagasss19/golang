@@ -25,6 +25,13 @@ type Data struct {
 	post_retweetcount int64
 }
 
+func test(c *gin.Context) {
+	c.JSON(200, gin.H{
+		"message": "pong",
+	})
+	return
+}
+
 func getData(c *gin.Context) {
 	client, err := mongo.NewClient(options.Client().ApplyURI("mongodb://localhost:27017"))
 	if err != nil {

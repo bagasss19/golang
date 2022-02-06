@@ -4,7 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func main() {
+func mains() {
 	r := gin.Default()
 	// User
 	r.POST("/login", LoginUser)
@@ -15,6 +15,7 @@ func main() {
 	r.DELETE("/user/:id", TokenAuthMiddleware(), deleteUser)
 
 	// Data
+	r.GET("/test", test)
 	r.GET("/data", TokenAuthMiddleware(), getData)
 	r.POST("/data", TokenAuthMiddleware(), createData)
 	r.DELETE("/data/:id", TokenAuthMiddleware(), deleteData)
