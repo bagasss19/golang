@@ -1,0 +1,865 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "This is a collection of account receivable API.",
+        "title": "Account Receivable API",
+        "contact": {},
+        "version": "1.0"
+    },
+    "host": "fa-dev.nabatisnack.co.id:3004",
+    "basePath": "/api/v1",
+    "paths": {
+        "/ar": {
+            "get": {
+                "description": "show AR by ID",
+                "tags": [
+                    "Account Receivable"
+                ],
+                "summary": "Get one AR",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "AR ID",
+                        "name": "ar_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Update AR status only, for other field use Update AR",
+                "tags": [
+                    "Account Receivable"
+                ],
+                "summary": "Update AR Status",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "AR ID",
+                        "name": "ar_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "description": "status update",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/ar.ARUpdateStatusRequestJson"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create AR",
+                "tags": [
+                    "Account Receivable"
+                ],
+                "summary": "Create AR",
+                "parameters": [
+                    {
+                        "description": "body payload",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.ARRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete AR by ID, only can delete AR with status 0 (Draft)",
+                "tags": [
+                    "Account Receivable"
+                ],
+                "summary": "Delete AR",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "AR ID",
+                        "name": "ar_id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "Update AR with dynamic fields, only can update AR with status 0 (Draft)",
+                "tags": [
+                    "Account Receivable"
+                ],
+                "summary": "Update AR",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "AR ID",
+                        "name": "ar_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "description": "enter desired field that want to update",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/ar.ARUpdateRequestJson"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/ar/company": {
+            "get": {
+                "description": "Get All Company Code from sales table",
+                "tags": [
+                    "Account Receivable"
+                ],
+                "summary": "Get All Company Code",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/ar/list": {
+            "get": {
+                "description": "show list of AR",
+                "tags": [
+                    "Account Receivable"
+                ],
+                "summary": "Get AR List",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Company ID",
+                        "name": "company_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Doc Date",
+                        "name": "doc_date",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Posting Date",
+                        "name": "posting_date",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Description",
+                        "name": "description",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Sales ID",
+                        "name": "sales_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Outlet ID",
+                        "name": "outlet_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Collector ID",
+                        "name": "collector_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Bank ID",
+                        "name": "bank_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Page. Default is 1",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Limit. Default is 5",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/ar/sales": {
+            "get": {
+                "description": "show Sales by sales ID",
+                "tags": [
+                    "Account Receivable"
+                ],
+                "summary": "Get one Sales Data",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Sales ID",
+                        "name": "sales_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/dp": {
+            "get": {
+                "description": "show DP by ID",
+                "tags": [
+                    "DP"
+                ],
+                "summary": "Get one DP",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "DP ID",
+                        "name": "dp_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            },
+            "post": {
+                "description": "Create DP with dynamic fields",
+                "tags": [
+                    "DP"
+                ],
+                "summary": "Create DP",
+                "parameters": [
+                    {
+                        "description": "body payload",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.DownPaymentRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete DP by ID, only can delete DP with status 0 (Draft)",
+                "tags": [
+                    "DP"
+                ],
+                "summary": "Delete DP",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "DP ID",
+                        "name": "dp_id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {}
+            },
+            "patch": {
+                "description": "Update DP with dynamic fields, only can update DP with status 0 (Draft) except update status itself",
+                "tags": [
+                    "DP"
+                ],
+                "summary": "Update DP",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Giro ID",
+                        "name": "dp_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "description": "enter desired field that want to update",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/downpayment.DPUpdateRequestJson"
+                        }
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/dp/list": {
+            "get": {
+                "description": "show list of DP",
+                "tags": [
+                    "DP"
+                ],
+                "summary": "Get DP List",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Page. Default is 1",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Limit. Default is 5",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/giro": {
+            "get": {
+                "description": "show Giro by ID",
+                "tags": [
+                    "Giro"
+                ],
+                "summary": "Get one Giro",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Giro ID",
+                        "name": "giro_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            },
+            "post": {
+                "description": "Create Giro",
+                "tags": [
+                    "Giro"
+                ],
+                "summary": "Create Giro",
+                "parameters": [
+                    {
+                        "description": "body payload",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.GiroRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete Giro by ID, only can delete Giro with status 0 (Draft)",
+                "tags": [
+                    "Giro"
+                ],
+                "summary": "Delete Giro",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Giro ID",
+                        "name": "giro_id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {}
+            },
+            "patch": {
+                "description": "Update Giro with dynamic fields, only can update Giro with status 0 (Draft) except update status itself",
+                "tags": [
+                    "Giro"
+                ],
+                "summary": "Update Giro",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Giro ID",
+                        "name": "giro_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "description": "enter desired field that want to update",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/giro.GiroUpdateRequestJson"
+                        }
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/giro/list": {
+            "get": {
+                "description": "show list of Giro",
+                "tags": [
+                    "Giro"
+                ],
+                "summary": "Get Giro List",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Page. Default is 1",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Limit. Default is 5",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {}
+            }
+        }
+    },
+    "definitions": {
+        "ar.ARUpdateRequestJson": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "object",
+                    "additionalProperties": true
+                }
+            }
+        },
+        "ar.ARUpdateStatusRequestJson": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "integer"
+                }
+            }
+        },
+        "downpayment.DPUpdateRequestJson": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "object",
+                    "additionalProperties": true
+                }
+            }
+        },
+        "giro.GiroUpdateRequestJson": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "object",
+                    "additionalProperties": true
+                }
+            }
+        },
+        "model.ARRequest": {
+            "type": "object",
+            "properties": {
+                "bank_id": {
+                    "type": "integer"
+                },
+                "cash_payment": {
+                    "type": "number"
+                },
+                "cndn_amount": {
+                    "type": "number"
+                },
+                "cndn_number": {
+                    "type": "integer"
+                },
+                "collector_id": {
+                    "type": "integer"
+                },
+                "company_id": {
+                    "type": "string"
+                },
+                "createdTime": {
+                    "type": "string"
+                },
+                "created_by": {
+                    "type": "string",
+                    "example": "bagas"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "disc_payment": {
+                    "type": "number"
+                },
+                "doc_date": {
+                    "type": "string",
+                    "example": "2020-12-19"
+                },
+                "doc_number": {
+                    "type": "integer"
+                },
+                "giro_amount": {
+                    "type": "number"
+                },
+                "giro_number": {
+                    "type": "integer"
+                },
+                "invoice": {
+                    "type": "string",
+                    "example": "2020-12-19"
+                },
+                "lastUpdate": {
+                    "type": "string"
+                },
+                "outlet_id": {
+                    "type": "integer"
+                },
+                "posting_date": {
+                    "type": "string",
+                    "example": "2020-12-19"
+                },
+                "return_amount": {
+                    "type": "number"
+                },
+                "return_number": {
+                    "type": "integer"
+                },
+                "sales_id": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "transaction_id": {
+                    "type": "integer"
+                },
+                "transfer_amount": {
+                    "type": "number"
+                },
+                "transfer_number": {
+                    "type": "integer"
+                },
+                "updated_by": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.DownPaymentRequest": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "number"
+                },
+                "company_id": {
+                    "type": "string"
+                },
+                "created_by": {
+                    "type": "string"
+                },
+                "created_time": {
+                    "type": "string",
+                    "example": "2020-12-19"
+                },
+                "currency_id": {
+                    "type": "integer"
+                },
+                "doc": {
+                    "type": "integer"
+                },
+                "doc_date": {
+                    "type": "string",
+                    "example": "2020-12-19"
+                },
+                "doc_number": {
+                    "type": "integer"
+                },
+                "doc_type": {
+                    "type": "string"
+                },
+                "gl_id": {
+                    "type": "integer"
+                },
+                "header_text": {
+                    "type": "string"
+                },
+                "last_update": {
+                    "type": "string",
+                    "example": "2020-12-19"
+                },
+                "outlet_id": {
+                    "type": "integer"
+                },
+                "period": {
+                    "type": "integer"
+                },
+                "posting_date": {
+                    "type": "string",
+                    "example": "2020-12-19"
+                },
+                "reason": {
+                    "type": "string"
+                },
+                "reference": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "taxreporting_date": {
+                    "type": "string",
+                    "example": "2020-12-19"
+                },
+                "trading_part": {
+                    "type": "string"
+                },
+                "trans_type_id": {
+                    "type": "integer"
+                },
+                "translation_date": {
+                    "type": "string",
+                    "example": "2020-12-19"
+                },
+                "updated_by": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.GiroRequest": {
+            "type": "object",
+            "properties": {
+                "account_id": {
+                    "type": "string"
+                },
+                "account_name": {
+                    "type": "string"
+                },
+                "bank_name": {
+                    "type": "string"
+                },
+                "company_id": {
+                    "type": "string"
+                },
+                "created_by": {
+                    "type": "string"
+                },
+                "created_time": {
+                    "type": "string",
+                    "example": "2020-12-19"
+                },
+                "due_date": {
+                    "type": "string",
+                    "example": "2020-12-19"
+                },
+                "giro_amount": {
+                    "type": "number"
+                },
+                "giro_date": {
+                    "type": "string",
+                    "example": "2020-12-19"
+                },
+                "giro_num": {
+                    "type": "integer"
+                },
+                "last_update": {
+                    "type": "string",
+                    "example": "2020-12-19"
+                },
+                "profit_center": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "updated_by": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.Data": {
+            "type": "object",
+            "properties": {
+                "items": {},
+                "pagination": {
+                    "$ref": "#/definitions/response.Pagination"
+                }
+            }
+        },
+        "response.Pagination": {
+            "type": "object",
+            "properties": {
+                "current_page": {
+                    "type": "integer"
+                },
+                "first": {
+                    "type": "boolean"
+                },
+                "last": {
+                    "type": "boolean"
+                },
+                "limit_per_page": {
+                    "type": "integer"
+                },
+                "total_items": {
+                    "type": "integer"
+                },
+                "total_page": {
+                    "type": "integer"
+                },
+                "total_rows": {
+                    "type": "integer"
+                }
+            }
+        },
+        "response.Response": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/response.Data"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

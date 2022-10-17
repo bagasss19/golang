@@ -1,0 +1,582 @@
+basePath: /api/v1
+definitions:
+  ar.ARUpdateRequestJson:
+    properties:
+      data:
+        additionalProperties: true
+        type: object
+    type: object
+  ar.ARUpdateStatusRequestJson:
+    properties:
+      status:
+        type: integer
+    type: object
+  downpayment.DPUpdateRequestJson:
+    properties:
+      data:
+        additionalProperties: true
+        type: object
+    type: object
+  giro.GiroUpdateRequestJson:
+    properties:
+      data:
+        additionalProperties: true
+        type: object
+    type: object
+  model.ARRequest:
+    properties:
+      bank_id:
+        type: integer
+      cash_payment:
+        type: number
+      cndn_amount:
+        type: number
+      cndn_number:
+        type: integer
+      collector_id:
+        type: integer
+      company_id:
+        type: string
+      created_by:
+        example: bagas
+        type: string
+      createdTime:
+        type: string
+      description:
+        type: string
+      disc_payment:
+        type: number
+      doc_date:
+        example: "2020-12-19"
+        type: string
+      doc_number:
+        type: integer
+      giro_amount:
+        type: number
+      giro_number:
+        type: integer
+      invoice:
+        example: "2020-12-19"
+        type: string
+      lastUpdate:
+        type: string
+      outlet_id:
+        type: integer
+      posting_date:
+        example: "2020-12-19"
+        type: string
+      return_amount:
+        type: number
+      return_number:
+        type: integer
+      sales_id:
+        type: integer
+      status:
+        type: integer
+      transaction_id:
+        type: integer
+      transfer_amount:
+        type: number
+      transfer_number:
+        type: integer
+      updated_by:
+        type: string
+    type: object
+  model.DownPaymentRequest:
+    properties:
+      amount:
+        type: number
+      company_id:
+        type: string
+      created_by:
+        type: string
+      created_time:
+        example: "2020-12-19"
+        type: string
+      currency_id:
+        type: integer
+      doc:
+        type: integer
+      doc_date:
+        example: "2020-12-19"
+        type: string
+      doc_number:
+        type: integer
+      doc_type:
+        type: string
+      gl_id:
+        type: integer
+      header_text:
+        type: string
+      last_update:
+        example: "2020-12-19"
+        type: string
+      outlet_id:
+        type: integer
+      period:
+        type: integer
+      posting_date:
+        example: "2020-12-19"
+        type: string
+      reason:
+        type: string
+      reference:
+        type: string
+      status:
+        type: integer
+      taxreporting_date:
+        example: "2020-12-19"
+        type: string
+      trading_part:
+        type: string
+      trans_type_id:
+        type: integer
+      translation_date:
+        example: "2020-12-19"
+        type: string
+      updated_by:
+        type: string
+    type: object
+  model.GiroRequest:
+    properties:
+      account_id:
+        type: string
+      account_name:
+        type: string
+      bank_name:
+        type: string
+      company_id:
+        type: string
+      created_by:
+        type: string
+      created_time:
+        example: "2020-12-19"
+        type: string
+      due_date:
+        example: "2020-12-19"
+        type: string
+      giro_amount:
+        type: number
+      giro_date:
+        example: "2020-12-19"
+        type: string
+      giro_num:
+        type: integer
+      last_update:
+        example: "2020-12-19"
+        type: string
+      profit_center:
+        type: string
+      status:
+        type: integer
+      type:
+        type: string
+      updated_by:
+        type: string
+    type: object
+  response.Data:
+    properties:
+      items: {}
+      pagination:
+        $ref: '#/definitions/response.Pagination'
+    type: object
+  response.Pagination:
+    properties:
+      current_page:
+        type: integer
+      first:
+        type: boolean
+      last:
+        type: boolean
+      limit_per_page:
+        type: integer
+      total_items:
+        type: integer
+      total_page:
+        type: integer
+      total_rows:
+        type: integer
+    type: object
+  response.Response:
+    properties:
+      data:
+        $ref: '#/definitions/response.Data'
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+host: fa-dev.nabatisnack.co.id:3004
+info:
+  contact: {}
+  description: This is a collection of account receivable API.
+  title: Account Receivable API
+  version: "1.0"
+paths:
+  /ar:
+    delete:
+      description: Delete AR by ID, only can delete AR with status 0 (Draft)
+      parameters:
+      - description: AR ID
+        in: query
+        name: ar_id
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Delete AR
+      tags:
+      - Account Receivable
+    get:
+      description: show AR by ID
+      parameters:
+      - description: AR ID
+        in: query
+        name: ar_id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Get one AR
+      tags:
+      - Account Receivable
+    patch:
+      description: Update AR with dynamic fields, only can update AR with status 0
+        (Draft)
+      parameters:
+      - description: AR ID
+        in: query
+        name: ar_id
+        required: true
+        type: string
+      - description: enter desired field that want to update
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/ar.ARUpdateRequestJson'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Update AR
+      tags:
+      - Account Receivable
+    post:
+      description: Create AR
+      parameters:
+      - description: body payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/model.ARRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Create AR
+      tags:
+      - Account Receivable
+    put:
+      description: Update AR status only, for other field use Update AR
+      parameters:
+      - description: AR ID
+        in: query
+        name: ar_id
+        required: true
+        type: string
+      - description: status update
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/ar.ARUpdateStatusRequestJson'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Update AR Status
+      tags:
+      - Account Receivable
+  /ar/company:
+    get:
+      description: Get All Company Code from sales table
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Get All Company Code
+      tags:
+      - Account Receivable
+  /ar/list:
+    get:
+      description: show list of AR
+      parameters:
+      - description: Company ID
+        in: query
+        name: company_id
+        type: string
+      - description: Doc Date
+        in: query
+        name: doc_date
+        type: string
+      - description: Posting Date
+        in: query
+        name: posting_date
+        type: string
+      - description: Description
+        in: query
+        name: description
+        type: string
+      - description: Sales ID
+        in: query
+        name: sales_id
+        type: string
+      - description: Outlet ID
+        in: query
+        name: outlet_id
+        type: string
+      - description: Collector ID
+        in: query
+        name: collector_id
+        type: string
+      - description: Bank ID
+        in: query
+        name: bank_id
+        type: string
+      - description: Page. Default is 1
+        in: query
+        name: page
+        type: string
+      - description: Limit. Default is 5
+        in: query
+        name: limit
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Get AR List
+      tags:
+      - Account Receivable
+  /ar/sales:
+    get:
+      description: show Sales by sales ID
+      parameters:
+      - description: Sales ID
+        in: query
+        name: sales_id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Get one Sales Data
+      tags:
+      - Account Receivable
+  /dp:
+    delete:
+      description: Delete DP by ID, only can delete DP with status 0 (Draft)
+      parameters:
+      - description: DP ID
+        in: query
+        name: dp_id
+        type: string
+      responses: {}
+      summary: Delete DP
+      tags:
+      - DP
+    get:
+      description: show DP by ID
+      parameters:
+      - description: DP ID
+        in: query
+        name: dp_id
+        required: true
+        type: string
+      responses: {}
+      summary: Get one DP
+      tags:
+      - DP
+    patch:
+      description: Update DP with dynamic fields, only can update DP with status 0
+        (Draft) except update status itself
+      parameters:
+      - description: Giro ID
+        in: query
+        name: dp_id
+        required: true
+        type: string
+      - description: enter desired field that want to update
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/downpayment.DPUpdateRequestJson'
+      responses: {}
+      summary: Update DP
+      tags:
+      - DP
+    post:
+      description: Create DP with dynamic fields
+      parameters:
+      - description: body payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/model.DownPaymentRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Create DP
+      tags:
+      - DP
+  /dp/list:
+    get:
+      description: show list of DP
+      parameters:
+      - description: Page. Default is 1
+        in: query
+        name: page
+        type: string
+      - description: Limit. Default is 5
+        in: query
+        name: limit
+        type: string
+      responses: {}
+      summary: Get DP List
+      tags:
+      - DP
+  /giro:
+    delete:
+      description: Delete Giro by ID, only can delete Giro with status 0 (Draft)
+      parameters:
+      - description: Giro ID
+        in: query
+        name: giro_id
+        type: string
+      responses: {}
+      summary: Delete Giro
+      tags:
+      - Giro
+    get:
+      description: show Giro by ID
+      parameters:
+      - description: Giro ID
+        in: query
+        name: giro_id
+        required: true
+        type: string
+      responses: {}
+      summary: Get one Giro
+      tags:
+      - Giro
+    patch:
+      description: Update Giro with dynamic fields, only can update Giro with status
+        0 (Draft) except update status itself
+      parameters:
+      - description: Giro ID
+        in: query
+        name: giro_id
+        required: true
+        type: string
+      - description: enter desired field that want to update
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/giro.GiroUpdateRequestJson'
+      responses: {}
+      summary: Update Giro
+      tags:
+      - Giro
+    post:
+      description: Create Giro
+      parameters:
+      - description: body payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/model.GiroRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Create Giro
+      tags:
+      - Giro
+  /giro/list:
+    get:
+      description: show list of Giro
+      parameters:
+      - description: Page. Default is 1
+        in: query
+        name: page
+        type: string
+      - description: Limit. Default is 5
+        in: query
+        name: limit
+        type: string
+      responses: {}
+      summary: Get Giro List
+      tags:
+      - Giro
+swagger: "2.0"
