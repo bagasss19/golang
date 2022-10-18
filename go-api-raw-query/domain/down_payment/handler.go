@@ -15,6 +15,7 @@ type DPHandler interface {
 	GetDPList(c *fiber.Ctx) error
 	GetOneDP(c *fiber.Ctx) error
 	CreateData(c *fiber.Ctx) error
+	CreateDataDetail(c *fiber.Ctx) error
 	DeleteDP(c *fiber.Ctx) error
 	UpdateDP(c *fiber.Ctx) error
 }
@@ -90,6 +91,23 @@ func (d dpHandler) CreateData(c *fiber.Ctx) error {
 	}
 
 	resp, err := d.dpFeature.CreateData(ctx, request)
+	if err != nil {
+		log.Println(err)
+		return response.ResponseError(c, "service error", err)
+	}
+
+	return response.ResponseOK(c, "OK!", resp)
+}
+
+func (d dpHandler) CreateDataDetail(c *fiber.Ctx) error {
+	ctx := context.CreateContext()
+	var request model.DownPaymentDetailRequest
+	if err := c.BodyParser(&request); err != nil {
+		log.Println(err)
+		return response.ResponseError(c, "Bad Request", err)
+	}
+
+	resp, err := d.dpFeature.CreateDataDetail(ctx, request)
 	if err != nil {
 		log.Println(err)
 		return response.ResponseError(c, "service error", err)

@@ -149,6 +149,20 @@ func (dp dpRepository) CreateData(ctx context.Context, request model.DownPayment
 	return nil
 }
 
+func (dp dpRepository) CreateDataDetail(ctx context.Context, request model.DownPaymentDetail) (err error) {
+	query := `
+	INSERT INTO ar_dp_detail(
+		dp_id
+	)	VALUES ($1) RETURNING dp_detail_id
+	`
+	_, err = dp.database.ExecContext(ctx, query, request.DPID)
+	if err != nil {
+		return fmt.Errorf("[CreateDataDetail] failed when executed query. Error: %+v", err)
+	}
+	
+	return nil
+}
+
 func (dp dpRepository) GetOneData(ctx context.Context, dpID int64) (data model.DownPayment, err error) {
 	query := `
 	SELECT
