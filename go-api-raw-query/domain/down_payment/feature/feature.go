@@ -12,7 +12,7 @@ type DPFeature interface {
 	GetAllData(ctx context.Context, payload *model.GetDPListPayload) (resp response.Data, err error)
 	GetOneData(ctx context.Context, giroID int64) (resp model.DownPayment, err error)
 	CreateData(ctx context.Context, request model.DownPaymentRequest) (giroID int64, err error)
-	CreateDataDetail(ctx context.Context, request model.DownPaymentDetailRequest) (dpID int64, err error)
+	CreateDataDetail(ctx context.Context, request model.DownPaymentDetailRequest) (dpDetailID int64, err error)
 	DeleteData(ctx context.Context, arID int64) (err error)
 	UpdateData(ctx context.Context, request model.DPUpdatePayload, giroID int64) (resp bool, err error)
 }

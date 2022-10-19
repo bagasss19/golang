@@ -80,7 +80,7 @@ func (d dpFeature) CreateData(ctx context.Context, request model.DownPaymentRequ
 	return dpID, nil
 }
 
-func (d dpFeature) CreateDataDetail(ctx context.Context, request model.DownPaymentDetailRequest) (dpID int64, err error) {
+func (d dpFeature) CreateDataDetail(ctx context.Context, request model.DownPaymentDetailRequest) (dpDetailID int64, err error) {
 	request.Status = 0
 	dpDetailPayload, err := model.NewDPDetail(request)
 	if err != nil {
@@ -92,7 +92,7 @@ func (d dpFeature) CreateDataDetail(ctx context.Context, request model.DownPayme
 		return 0, err
 	}
 
-	return dpID, nil
+	return dpDetailID, nil
 }
 
 func (d dpFeature) DeleteData(ctx context.Context, dpID int64) (err error) {
