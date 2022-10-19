@@ -152,10 +152,50 @@ func (dp dpRepository) CreateData(ctx context.Context, request model.DownPayment
 func (dp dpRepository) CreateDataDetail(ctx context.Context, request model.DownPaymentDetail) (err error) {
 	query := `
 	INSERT INTO ar_dp_detail(
-		dp_id
-	)	VALUES ($1) RETURNING dp_detail_id
+		dp_id,
+		amount_in_loc,
+		amount_in_doc,
+		ppn_code,
+		tax_amount,
+		po_number,
+		po_item,
+		assign,
+		payment_block,
+		payment_met,
+		payment_meet,
+		profit_id,
+		due_on,
+		orders,
+		reason,
+		status,
+		created_time,
+		last_update,
+		created_by,
+		updated_by
+	)	VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20) RETURNING dp_detail_id
 	`
-	_, err = dp.database.ExecContext(ctx, query, request.DPID)
+	_, err = dp.database.ExecContext(ctx, query,
+		request.DPID,
+		request.AmountInLoc,
+		request.AmountInDoc,
+		request.PPNCode,
+		request.TaxAmount,
+		request.PONumber,
+		request.POItem,
+		request.Assign,
+		request.PaymentBlock,
+		request.PaymentMet,
+		request.PaymentMeet,
+		request.ProfitID,
+		request.DueOn,
+		request.Orders,
+		request.Reason,
+		request.Status,
+		request.CreatedTime,
+		request.LastUpdate,
+		request.CreatedBy,
+		request.UpdatedBy,
+	)
 	if err != nil {
 		return fmt.Errorf("[CreateDataDetail] failed when executed query. Error: %+v", err)
 	}
