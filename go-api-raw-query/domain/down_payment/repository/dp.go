@@ -324,6 +324,47 @@ func (dp dpRepository) GetOneData(ctx context.Context, dpID int64) (data model.D
 	return data, nil
 }
 
+func (dp dpRepository) GetOneDataDetail(ctx context.Context, dpDetailID int64) (data model.DownPaymentDetail, err error) {
+	query := `
+	SELECT
+		dp_detail_id,
+		dp_id,
+		amount_loc,
+		amount_doc,
+		ppn_code,
+		tax_amount,
+		po_number,
+		po_item,
+		assign,
+		"text",
+		payment_ref,
+		payment_block,
+		payment_met,
+		profit,
+		due_on,
+		"order",
+		reason,
+		status,
+		created_time,
+		created_by,
+		updated_by,
+		last_update
+	FROM
+		ar_dp_detail
+	WHERE
+		dp_detail_id = $1	
+	`	
+
+	err = dp.database.GetContext(ctx, &data, query, dpDetailID)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return data, fmt.Errorf("[GetOneDataDetail] data not found!. Error: %+v", err)
+		}
+		return data, fmt.Errorf("[GetOneDataDetail] failed when executed query. Error: %+v", err)
+	}
+	return data, nil
+}
+
 func (dp dpRepository) DeleteData(ctx context.Context, dpID int64) (err error) {
 	query1 := `
 	DELETE FROM

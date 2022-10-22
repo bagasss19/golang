@@ -5,6 +5,7 @@ import (
 	"fico_ar/domain/down_payment/model"
 	"fico_ar/domain/shared/context"
 	"fico_ar/domain/shared/response"
+	"fmt"
 	"log"
 	"strconv"
 
@@ -15,6 +16,7 @@ type DPHandler interface {
 	GetDPList(c *fiber.Ctx) error
 	GetDPDetailList(c *fiber.Ctx) error
 	GetOneDP(c *fiber.Ctx) error
+	GetOneDPDetail(c *fiber.Ctx) error
 	CreateData(c *fiber.Ctx) error
 	CreateDataDetail(c *fiber.Ctx) error
 	DeleteDP(c *fiber.Ctx) error
@@ -56,6 +58,7 @@ func (d dpHandler) GetDPList(c *fiber.Ctx) error {
 	return response.ResponseOKWithPagination(c, "OK!", resp)
 }
 
+// TODO: create DPDetailList godoc
 func (d dpHandler) GetDPDetailList(c *fiber.Ctx) error {
 	ctx := context.CreateContext()
 	page, _ := strconv.Atoi(c.Query("page"))
@@ -93,6 +96,21 @@ func (d dpHandler) GetOneDP(c *fiber.Ctx) error {
 	return response.ResponseOK(c, "OK!", resp)
 }
 
+// TODO: create GetOneDPDetail godoc
+func (d dpHandler) GetOneDPDetail(c *fiber.Ctx) error {
+	ctx := context.CreateContext()
+	dpDetailID, _ := strconv.Atoi(c.Params("dp_detail_id"))
+	fmt.Println(dpDetailID)
+
+	resp, err := d.dpFeature.GetOneDataDetail(ctx, int64(dpDetailID))
+	if err != nil {
+		log.Println(err)
+		return response.ResponseError(c, "service error", err)
+	}
+
+	return response.ResponseOK(c, "OK!", resp)
+}
+
 // Create DP godoc
 // @Summary      Create DP
 // @Description  Create DP with dynamic fields
@@ -118,6 +136,7 @@ func (d dpHandler) CreateData(c *fiber.Ctx) error {
 	return response.ResponseOK(c, "OK!", resp)
 }
 
+// TODO: create CreateDataDetail godoc
 func (d dpHandler) CreateDataDetail(c *fiber.Ctx) error {
 	ctx := context.CreateContext()
 	var request model.DownPaymentDetailRequest

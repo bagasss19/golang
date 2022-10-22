@@ -111,6 +111,15 @@ func (d dpFeature) GetOneData(ctx context.Context, dpID int64) (resp model.DownP
 	return resp, nil
 }
 
+func (d dpFeature) GetOneDataDetail(ctx context.Context, dpDetailID int64) (resp model.DownPaymentDetail, err error) {
+	resp, err = d.dpRepository.GetOneDataDetail(ctx, dpDetailID)
+	if err != nil {
+		return resp, err
+	}
+
+	return resp, nil
+}
+
 func (d dpFeature) CreateData(ctx context.Context, request model.DownPaymentRequest) (dpID int64, err error) {
 	request.Status = 0
 	dpPayload, err := model.NewDP(request)
