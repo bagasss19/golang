@@ -8,6 +8,7 @@ import (
 
 type DPRepository interface {
 	GetAllData(ctx context.Context, payload *model.GetDPListPayload) (resp model.GetAllDPResponse, err error)
+	GetAllDataDetail(ctx context.Context, payload *model.GetDPDetailListPayload) (resp model.GetAllDPDetailResponse, err error)
 	CreateData(ctx context.Context, request model.DownPayment) (err error)
 	CreateDataDetail(ctx context.Context, request model.DownPaymentDetail) (err error)
 	GetOneData(ctx context.Context, dpID int64) (data model.DownPayment, err error)

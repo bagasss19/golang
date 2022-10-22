@@ -10,6 +10,7 @@ import (
 
 type DPFeature interface {
 	GetAllData(ctx context.Context, payload *model.GetDPListPayload) (resp response.Data, err error)
+	GetAllDataDetail(ctx context.Context, payload *model.GetDPDetailListPayload) (resp response.Data, err error)
 	GetOneData(ctx context.Context, giroID int64) (resp model.DownPayment, err error)
 	CreateData(ctx context.Context, request model.DownPaymentRequest) (giroID int64, err error)
 	CreateDataDetail(ctx context.Context, request model.DownPaymentDetailRequest) (dpDetailID int64, err error)

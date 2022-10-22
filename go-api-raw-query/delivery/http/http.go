@@ -53,6 +53,7 @@ func ServerHttp(handler handler) *fiber.App {
 	dp_detail := v1.Group("dp_detail")
 	{
 		dp_detail.Post("/", handler.dpHandler.CreateDataDetail)
+		dp_detail.Get("/list", handler.dpHandler.GetDPDetailList)
 	}
 
 	app.Get("/swagger/*", swagger.HandlerDefault)

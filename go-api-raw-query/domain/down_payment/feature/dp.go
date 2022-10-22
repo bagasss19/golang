@@ -56,6 +56,52 @@ func (d dpFeature) GetAllData(ctx context.Context, payload *model.GetDPListPaylo
 	return resp, nil
 }
 
+func (d dpFeature) GetAllDataDetail(ctx context.Context, payload *model.GetDPDetailListPayload) (resp response.Data, err error) {
+	if payload.Limit == 0 {
+		payload.Limit = 5
+	}
+
+	if payload.Page == 0 || payload.Page == 1 {
+		payload.Offset = 0
+	} else {
+		payload.Offset = (payload.Page - 1) * payload.Limit
+	}
+
+	data, err := d.dpRepository.GetAllDataDetail(ctx, payload)
+	if err != nil {
+		return resp, err
+	}
+
+	pagination := response.Pagination{
+		LimitPerPage: payload.Limit,
+		CurrentPage:  payload.Page,
+		TotalPage:    int64(math.Ceil(float64(data.TotalItem) / float64(payload.Limit))),
+		TotalRows:    int64(len(data.Data)),
+		TotalItems:   data.TotalItem,
+	}
+
+	if payload.Page == 0 {
+		pagination.CurrentPage = 1
+	}
+
+	if pagination.CurrentPage == 1 {
+		pagination.First = true
+	} else {
+		pagination.First = false
+	}
+
+	if pagination.CurrentPage == pagination.TotalPage {
+		pagination.Last = true
+	} else {
+		pagination.Last = false
+	}
+
+	resp.Items = data.Data
+	resp.Pagination = pagination
+
+	return resp, nil	
+}
+
 func (d dpFeature) GetOneData(ctx context.Context, dpID int64) (resp model.DownPayment, err error) {
 	resp, err = d.dpRepository.GetOneData(ctx, dpID)
 	if err != nil {

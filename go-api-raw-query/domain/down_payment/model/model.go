@@ -258,7 +258,23 @@ type GetAllDPResponse struct {
 	Last      bool
 }
 
+type GetAllDPDetailResponse struct {
+	Data []DownPaymentDetail
+	TotalPage int64
+	TotalItem int64
+	Page int64
+	Size int64
+	First bool
+	Last bool
+}
+
 type GetDPListPayload struct {
+	Page   int64 `query:"page"`
+	Limit  int64 `query:"limit"`
+	Offset int64 //payload for repository
+}
+
+type GetDPDetailListPayload struct {
 	Page   int64 `query:"page"`
 	Limit  int64 `query:"limit"`
 	Offset int64 //payload for repository

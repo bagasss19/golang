@@ -13,6 +13,7 @@ import (
 
 type DPHandler interface {
 	GetDPList(c *fiber.Ctx) error
+	GetDPDetailList(c *fiber.Ctx) error
 	GetOneDP(c *fiber.Ctx) error
 	CreateData(c *fiber.Ctx) error
 	CreateDataDetail(c *fiber.Ctx) error
@@ -47,6 +48,24 @@ func (d dpHandler) GetDPList(c *fiber.Ctx) error {
 	}
 
 	resp, err := d.dpFeature.GetAllData(ctx, &filter)
+	if err != nil {
+		log.Println(err)
+		return response.ResponseError(c, "service error", err)
+	}
+
+	return response.ResponseOKWithPagination(c, "OK!", resp)
+}
+
+func (d dpHandler) GetDPDetailList(c *fiber.Ctx) error {
+	ctx := context.CreateContext()
+	page, _ := strconv.Atoi(c.Query("page"))
+	limit, _ := strconv.Atoi(c.Query("limit"))
+	filter := model.GetDPDetailListPayload{
+		Page: int64(page),
+		Limit: int64(limit),
+	}
+
+	resp, err := d.dpFeature.GetAllDataDetail(ctx, &filter)
 	if err != nil {
 		log.Println(err)
 		return response.ResponseError(c, "service error", err)
