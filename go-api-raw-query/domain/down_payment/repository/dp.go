@@ -102,7 +102,7 @@ func (dp dpRepository) GetAllDataDetail(ctx context.Context, payload *model.GetD
 		po_number,
 		po_item,
 		assign,
-		"text",
+		text,
 		payment_ref,
 		payment_block,
 		payment_met,
@@ -117,16 +117,13 @@ func (dp dpRepository) GetAllDataDetail(ctx context.Context, payload *model.GetD
 		last_update
 	FROM
 		ar_dp_detail
-	WHERE
-		1=1	
 	`
 
 	queryCount := `
 	SELECT COUNT(*) 
 	FROM
 		ar_dp_detail
-	WHERE
-		1=1`
+	`
 
 	var wg sync.WaitGroup
 	wg.Add(2)
@@ -336,7 +333,7 @@ func (dp dpRepository) GetOneDataDetail(ctx context.Context, dpDetailID int64) (
 		po_number,
 		po_item,
 		assign,
-		"text",
+		text,
 		payment_ref,
 		payment_block,
 		payment_met,

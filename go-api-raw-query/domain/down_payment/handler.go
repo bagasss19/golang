@@ -5,7 +5,6 @@ import (
 	"fico_ar/domain/down_payment/model"
 	"fico_ar/domain/shared/context"
 	"fico_ar/domain/shared/response"
-	"fmt"
 	"log"
 	"strconv"
 
@@ -100,7 +99,6 @@ func (d dpHandler) GetOneDP(c *fiber.Ctx) error {
 func (d dpHandler) GetOneDPDetail(c *fiber.Ctx) error {
 	ctx := context.CreateContext()
 	dpDetailID, _ := strconv.Atoi(c.Params("dp_detail_id"))
-	fmt.Println(dpDetailID)
 
 	resp, err := d.dpFeature.GetOneDataDetail(ctx, int64(dpDetailID))
 	if err != nil {
