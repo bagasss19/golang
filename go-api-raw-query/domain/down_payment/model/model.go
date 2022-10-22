@@ -144,63 +144,66 @@ func NewDP(request DownPaymentRequest) (dpModel DownPayment, err error) {
 type DownPaymentDetail struct {
 	DPDetailID   int64        `db:"dp_detail_id"`
 	DPID         int64        `db:"dp_id"`
-	AmountInLoc  float64      `db:"amount_in_loc"`
-	AmountInDoc  float64      `db:"amount_in_doc"`
+	AmountLoc  	 float64      `db:"amount_loc"`
+	AmountDoc    float64      `db:"amount_doc"`
 	PPNCode      int64        `db:"ppn_code"`
 	TaxAmount    float64      `db:"tax_amount"`
 	PONumber     int64        `db:"po_number"`
 	POItem       int64        `db:"po_item"`
 	Assign       string       `db:"assign"`
+	Text				 string				`db:"text"`
+	PaymentRef	 int64				`db:"payment_ref"`
 	PaymentBlock int64        `db:"payment_block"`
 	PaymentMet   int64        `db:"payment_met"`
-	PaymentMeet  int64        `db:"payment_meet"`
-	ProfitID     string       `db:"profit_id"`
+	Profit       string       `db:"profit"`
 	DueOn        sql.NullTime `db:"due_on"`
-	Orders       string       `db:"orders"`
+	Order        string       `db:"order"`
 	Reason       string       `db:"reason"`
 	Status       int64        `db:"status"`
 	CreatedTime  sql.NullTime `db:"created_time"`
-	LastUpdate   sql.NullTime `db:"last_update"`
 	CreatedBy    string       `db:"created_by"`
 	UpdatedBy    string       `db:"updated_by"`
+	LastUpdate   sql.NullTime `db:"last_update"`
 }
 
 type DownPaymentDetailRequest struct {
 	DPID         int64   `json:"dp_id"`
-	AmountInLoc  float64 `json:"amount_in_loc"`
-	AmountInDoc  float64 `json:"amount_in_doc"`
+	AmountLoc    float64 `json:"amount_loc"`
+	AmountDoc    float64 `json:"amount_doc"`
 	PPNCode      int64   `json:"ppn_code"`
 	TaxAmount    float64 `json:"tax_amount"`
 	PONumber     int64   `json:"po_number"`
 	POItem       int64   `json:"po_item"`
 	Assign       string  `json:"assign"`
+	Text				 string	 `json:"text"`
+	PaymentRef	 int64	 `json:"payment_ref"`
 	PaymentBlock int64   `json:"payment_block"`
 	PaymentMet   int64   `json:"payment_met"`
-	PaymentMeet  int64   `json:"payment_meet"`
-	ProfitID     string  `json:"profit_id"`
+	Profit       string  `json:"profit"`
 	DueOn        string  `json:"due_on" example:"2020-12-19"`
-	Orders       string  `json:"orders"`
+	Order        string  `json:"order"`
 	Reason       string  `json:"reason"`
 	Status       int64   `json:"status"`
 	CreatedTime  string  `json:"created_time" example:"2020-12-19"`
-	LastUpdate   string  `json:"last_update" example:"2020-12-19"`
 	CreatedBy    string  `josn:"created_by"`
 	UpdatedBy    string  `json:"updated_by"`
+	LastUpdate   string  `json:"last_update" example:"2020-12-19"`
 }
 
 func NewDPDetail(request DownPaymentDetailRequest) (dpModel DownPaymentDetail, err error) {
 	dpModel.DPID = request.DPID
-	dpModel.AmountInDoc = request.AmountInDoc
-	dpModel.AmountInLoc = request.AmountInLoc
+	dpModel.AmountLoc = request.AmountLoc
+	dpModel.AmountDoc= request.AmountDoc
 	dpModel.PPNCode = request.PPNCode
 	dpModel.TaxAmount = request.TaxAmount
 	dpModel.PONumber = request.PONumber
 	dpModel.POItem = request.POItem
 	dpModel.Assign = request.Assign
+	dpModel.Text = request.Text
+	dpModel.PaymentRef = request.PaymentRef
 	dpModel.PaymentBlock = request.PaymentBlock
 	dpModel.PaymentMet = request.PaymentMet
-	dpModel.PaymentMeet = request.PaymentMeet
-	dpModel.ProfitID = request.ProfitID
+	dpModel.Profit = request.Profit
 
 	dueOn, err := time.Parse(constant.TimeFormat, request.DueOn)
 	if err != nil {
@@ -211,7 +214,7 @@ func NewDPDetail(request DownPaymentDetailRequest) (dpModel DownPaymentDetail, e
 		Valid: true,
 	}
 
-	dpModel.Orders = request.Orders
+	dpModel.Order = request.Order
 	dpModel.Reason = request.Reason
 	dpModel.Status = request.Status
 	if dpModel.CreatedTime.Time.IsZero() {
