@@ -90,6 +90,80 @@ func (dp dpRepository) GetAllData(ctx context.Context, payload *model.GetDPListP
 	return
 }
 
+func (dp dpRepository) GetAllDataDetail(ctx context.Context, payload *model.GetDPDetailListPayload) (resp model.GetAllDPDetailResponse, err error) {
+	query := `
+	SELECT
+		dp_detail_id,
+		dp_id,
+		amount_loc,
+		amount_doc,
+		ppn_code,
+		tax_amount,
+		po_number,
+		po_item,
+		assign,
+		text,
+		payment_ref,
+		payment_block,
+		payment_met,
+		profit,
+		due_on,
+		"order",
+		reason,
+		status,
+		created_time,
+		created_by,
+		updated_by,
+		last_update
+	FROM
+		ar_dp_detail
+	`
+
+	queryCount := `
+	SELECT COUNT(*) 
+	FROM
+		ar_dp_detail
+	`
+
+	var wg sync.WaitGroup
+	wg.Add(2)
+
+	go func() {
+		defer wg.Done()
+		var count int64
+
+		rows, err := dp.database.Query(queryCount)
+		if err != nil {
+			log.Fatal(err)
+			return
+		}
+		defer rows.Close()
+
+		for rows.Next() {
+			if err := rows.Scan(&count); err != nil {
+				log.Fatal(err)
+				return
+			}
+		}
+
+		resp.TotalItem = count
+	}()
+
+	go func() {
+		defer wg.Done()
+		query += fmt.Sprintf(`ORDER BY "dp_detail_id" LIMIT %d OFFSET %d`, payload.Limit, payload.Offset)
+		err = dp.database.SelectContext(ctx, &resp.Data, query)
+		if err != nil {
+			err = fmt.Errorf("[GetAllDataDetail] failed when executed query. Error: %+v", err)
+			return
+		}
+	}()
+
+	wg.Wait()
+
+	return	
+}
+
 func (dp dpRepository) CreateData(ctx context.Context, request model.DownPayment) (err error) {
 	query := `
 	INSERT INTO ar_down_payment(
@@ -243,6 +317,47 @@ func (dp dpRepository) GetOneData(ctx context.Context, dpID int64) (data model.D
 			return data, fmt.Errorf("[GetOneData] data not found!. Error: %+v", err)
 		}
 		return data, fmt.Errorf("[GetOneData] failed when executed query. Error: %+v", err)
+	}
+	return data, nil
+}
+
+func (dp dpRepository) GetOneDataDetail(ctx context.Context, dpDetailID int64) (data model.DownPaymentDetail, err error) {
+	query := `
+	SELECT
+		dp_detail_id,
+		dp_id,
+		amount_loc,
+		amount_doc,
+		ppn_code,
+		tax_amount,
+		po_number,
+		po_item,
+		assign,
+		text,
+		payment_ref,
+		payment_block,
+		payment_met,
+		profit,
+		due_on,
+		"order",
+		reason,
+		status,
+		created_time,
+		created_by,
+		updated_by,
+		last_update
+	FROM
+		ar_dp_detail
+	WHERE
+		dp_detail_id = $1	
+	`	
+
+	err = dp.database.GetContext(ctx, &data, query, dpDetailID)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return data, fmt.Errorf("[GetOneDataDetail] data not found!. Error: %+v", err)
+		}
+		return data, fmt.Errorf("[GetOneDataDetail] failed when executed query. Error: %+v", err)
 	}
 	return data, nil
 }

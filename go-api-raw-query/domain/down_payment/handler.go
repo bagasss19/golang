@@ -13,7 +13,9 @@ import (
 
 type DPHandler interface {
 	GetDPList(c *fiber.Ctx) error
+	GetDPDetailList(c *fiber.Ctx) error
 	GetOneDP(c *fiber.Ctx) error
+	GetOneDPDetail(c *fiber.Ctx) error
 	CreateData(c *fiber.Ctx) error
 	CreateDataDetail(c *fiber.Ctx) error
 	DeleteDP(c *fiber.Ctx) error
@@ -55,6 +57,25 @@ func (d dpHandler) GetDPList(c *fiber.Ctx) error {
 	return response.ResponseOKWithPagination(c, "OK!", resp)
 }
 
+// TODO: create DPDetailList godoc
+func (d dpHandler) GetDPDetailList(c *fiber.Ctx) error {
+	ctx := context.CreateContext()
+	page, _ := strconv.Atoi(c.Query("page"))
+	limit, _ := strconv.Atoi(c.Query("limit"))
+	filter := model.GetDPDetailListPayload{
+		Page: int64(page),
+		Limit: int64(limit),
+	}
+
+	resp, err := d.dpFeature.GetAllDataDetail(ctx, &filter)
+	if err != nil {
+		log.Println(err)
+		return response.ResponseError(c, "service error", err)
+	}
+
+	return response.ResponseOKWithPagination(c, "OK!", resp)
+}
+
 // Get DP godoc
 // @Summary      Get one DP
 // @Description  show DP by ID
@@ -66,6 +87,20 @@ func (d dpHandler) GetOneDP(c *fiber.Ctx) error {
 	arID, _ := strconv.Atoi(c.Query("dp_id"))
 
 	resp, err := d.dpFeature.GetOneData(ctx, int64(arID))
+	if err != nil {
+		log.Println(err)
+		return response.ResponseError(c, "service error", err)
+	}
+
+	return response.ResponseOK(c, "OK!", resp)
+}
+
+// TODO: create GetOneDPDetail godoc
+func (d dpHandler) GetOneDPDetail(c *fiber.Ctx) error {
+	ctx := context.CreateContext()
+	dpDetailID, _ := strconv.Atoi(c.Params("dp_detail_id"))
+
+	resp, err := d.dpFeature.GetOneDataDetail(ctx, int64(dpDetailID))
 	if err != nil {
 		log.Println(err)
 		return response.ResponseError(c, "service error", err)
@@ -99,6 +134,7 @@ func (d dpHandler) CreateData(c *fiber.Ctx) error {
 	return response.ResponseOK(c, "OK!", resp)
 }
 
+// TODO: create CreateDataDetail godoc
 func (d dpHandler) CreateDataDetail(c *fiber.Ctx) error {
 	ctx := context.CreateContext()
 	var request model.DownPaymentDetailRequest
