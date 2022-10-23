@@ -48,7 +48,7 @@ func Test_arFeature_GetAllData(t *testing.T) {
 				payload: &model.ARFilterList{},
 			},
 			wantResp: response.Data{
-				Items: []model.ARResponse{{}},
+				Items: []model.AR{{}},
 				Pagination: response.Pagination{
 					LimitPerPage: 5,
 					CurrentPage:  1,
@@ -62,7 +62,7 @@ func Test_arFeature_GetAllData(t *testing.T) {
 			wantErr: false,
 			mockFunc: func() {
 				mockRepo.EXPECT().GetAllData(gomock.Any(), gomock.Any()).Return(model.GetAllARResponse{
-					Data:      []model.ARResponse{{}},
+					Data:      []model.AR{{}},
 					TotalPage: 1,
 					TotalItem: 1,
 					Page:      1,
@@ -85,7 +85,7 @@ func Test_arFeature_GetAllData(t *testing.T) {
 			wantErr:  true,
 			mockFunc: func() {
 				mockRepo.EXPECT().GetAllData(gomock.Any(), gomock.Any()).Return(model.GetAllARResponse{
-					Data:      []model.ARResponse{{}},
+					Data:      []model.AR{{}},
 					TotalPage: 1,
 					TotalItem: 1,
 				}, errors.New("error"))
@@ -129,7 +129,7 @@ func Test_arFeature_GetOneData(t *testing.T) {
 		name     string
 		fields   fields
 		args     args
-		wantResp model.ARResponse
+		wantResp model.AR
 		wantErr  bool
 		mockFunc func()
 	}{
@@ -143,10 +143,10 @@ func Test_arFeature_GetOneData(t *testing.T) {
 				ctx:  context.Background(),
 				arID: 1,
 			},
-			wantResp: model.ARResponse{},
+			wantResp: model.AR{},
 			wantErr:  false,
 			mockFunc: func() {
-				mockRepo.EXPECT().GetOneData(gomock.Any(), gomock.Any()).Return(model.ARResponse{}, nil)
+				mockRepo.EXPECT().GetOneData(gomock.Any(), gomock.Any()).Return(model.AR{}, nil)
 			},
 		},
 		{
@@ -158,10 +158,10 @@ func Test_arFeature_GetOneData(t *testing.T) {
 				ctx:  context.Background(),
 				arID: 1,
 			},
-			wantResp: model.ARResponse{},
+			wantResp: model.AR{},
 			wantErr:  true,
 			mockFunc: func() {
-				mockRepo.EXPECT().GetOneData(gomock.Any(), gomock.Any()).Return(model.ARResponse{}, errors.New("error"))
+				mockRepo.EXPECT().GetOneData(gomock.Any(), gomock.Any()).Return(model.AR{}, errors.New("error"))
 			},
 		},
 	}
@@ -176,78 +176,6 @@ func Test_arFeature_GetOneData(t *testing.T) {
 			gotResp, err := ar.GetOneData(tt.args.ctx, tt.args.arID)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("arFeature.GetOneData() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !cmp.Equal(gotResp, tt.wantResp, cmpopts.EquateEmpty()) {
-				t.Errorf("arFeature.GetOneData() got = %v, want %v", gotResp, tt.wantResp)
-			}
-		})
-	}
-}
-
-func Test_arFeature_GetOneDataSales(t *testing.T) {
-	mockCtrl := gomock.NewController(t)
-	defer mockCtrl.Finish()
-
-	mockRepo := arMock.NewMockArRepository(mockCtrl)
-	type fields struct {
-		config       config.EnvironmentConfig
-		arRepository repository.ArRepository
-	}
-	type args struct {
-		ctx     context.Context
-		salesID int64
-	}
-	tests := []struct {
-		name     string
-		fields   fields
-		args     args
-		wantResp model.ARSales
-		wantErr  bool
-		mockFunc func()
-	}{
-		// TODO: Add test cases.
-		{
-			name: "positive case",
-			fields: fields{
-				arRepository: mockRepo,
-			},
-			args: args{
-				ctx:     context.Background(),
-				salesID: 1,
-			},
-			wantResp: model.ARSales{},
-			wantErr:  false,
-			mockFunc: func() {
-				mockRepo.EXPECT().GetOneDataSales(gomock.Any(), gomock.Any()).Return(model.ARSales{}, nil)
-			},
-		},
-		{
-			name: "error case",
-			fields: fields{
-				arRepository: mockRepo,
-			},
-			args: args{
-				ctx:     context.Background(),
-				salesID: 1,
-			},
-			wantResp: model.ARSales{},
-			wantErr:  true,
-			mockFunc: func() {
-				mockRepo.EXPECT().GetOneDataSales(gomock.Any(), gomock.Any()).Return(model.ARSales{}, errors.New("error"))
-			},
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			ar := arFeature{
-				config:       tt.fields.config,
-				arRepository: tt.fields.arRepository,
-			}
-			tt.mockFunc()
-			gotResp, err := ar.GetOneDataSales(tt.args.ctx, tt.args.salesID)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("arFeature.GetOneDataSales() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if !cmp.Equal(gotResp, tt.wantResp, cmpopts.EquateEmpty()) {
@@ -327,167 +255,6 @@ func Test_arFeature_GetAllCompanyCode(t *testing.T) {
 	}
 }
 
-func Test_arFeature_CreateData(t *testing.T) {
-	mockCtrl := gomock.NewController(t)
-	defer mockCtrl.Finish()
-
-	mockRepo := arMock.NewMockArRepository(mockCtrl)
-
-	type fields struct {
-		config       config.EnvironmentConfig
-		arRepository repository.ArRepository
-	}
-	type args struct {
-		ctx     context.Context
-		request model.ARRequest
-	}
-	tests := []struct {
-		name     string
-		fields   fields
-		args     args
-		wantArID int64
-		wantErr  bool
-		mockFunc func()
-	}{
-		// TODO: Add test cases.
-		{
-			name: "positive case",
-			fields: fields{
-				arRepository: mockRepo,
-			},
-			args: args{
-				ctx: context.Background(),
-				request: model.ARRequest{
-					CompanyID:     "COMP0001",
-					DocNumber:     1,
-					DocDate:       "2020-10-12",
-					PostingDate:   "2020-10-12",
-					SalesID:       1,
-					OutletID:      1,
-					CollectiorID:  1,
-					BankID:        1,
-					Description:   "test post",
-					TransactionID: 1,
-					Invoice:       "2020-10-12",
-					DiscPayment:   1,
-					CashPayment:   1,
-				},
-			},
-			wantArID: 1,
-			wantErr:  false,
-			mockFunc: func() {
-				mockRepo.EXPECT().CreateData(gomock.Any(), gomock.Any()).Return(int64(1), nil)
-				mockRepo.EXPECT().CreateDataDetail(gomock.Any(), gomock.Any()).Return(true, nil)
-			},
-		},
-		{
-			name: "error case - error on create data",
-			fields: fields{
-				arRepository: mockRepo,
-			},
-			args: args{
-				ctx: context.Background(),
-				request: model.ARRequest{
-					CompanyID:     "COMP0001",
-					DocNumber:     1,
-					DocDate:       "2020-10-12",
-					PostingDate:   "2020-10-12",
-					SalesID:       1,
-					OutletID:      1,
-					CollectiorID:  1,
-					BankID:        1,
-					Description:   "test post",
-					TransactionID: 1,
-					Invoice:       "2020-10-12",
-					DiscPayment:   1,
-					CashPayment:   1,
-				},
-			},
-			wantArID: 0,
-			wantErr:  true,
-			mockFunc: func() {
-				mockRepo.EXPECT().CreateData(gomock.Any(), gomock.Any()).Return(int64(0), errors.New("error"))
-			},
-		},
-		{
-			name: "error case - error on create data detail",
-			fields: fields{
-				arRepository: mockRepo,
-			},
-			args: args{
-				ctx: context.Background(),
-				request: model.ARRequest{
-					CompanyID:     "COMP0001",
-					DocNumber:     1,
-					DocDate:       "2020-10-12",
-					PostingDate:   "2020-10-12",
-					SalesID:       1,
-					OutletID:      1,
-					CollectiorID:  1,
-					BankID:        1,
-					Description:   "test post",
-					TransactionID: 1,
-					Invoice:       "2020-10-12",
-					DiscPayment:   1,
-					CashPayment:   1,
-				},
-			},
-			wantArID: 0,
-			wantErr:  true,
-			mockFunc: func() {
-				mockRepo.EXPECT().CreateData(gomock.Any(), gomock.Any()).Return(int64(1), nil)
-				mockRepo.EXPECT().CreateDataDetail(gomock.Any(), gomock.Any()).Return(false, errors.New("error"))
-			},
-		},
-		{
-			name: "error case - error on parse invoice datetime",
-			fields: fields{
-				arRepository: mockRepo,
-			},
-			args: args{
-				ctx: context.Background(),
-				request: model.ARRequest{
-					CompanyID:     "COMP0001",
-					DocNumber:     1,
-					DocDate:       "2020-10-12",
-					PostingDate:   "2020-10-12",
-					SalesID:       1,
-					OutletID:      1,
-					CollectiorID:  1,
-					BankID:        1,
-					Description:   "test post",
-					TransactionID: 1,
-					Invoice:       "2020-10-2",
-					DiscPayment:   1,
-					CashPayment:   1,
-				},
-			},
-			wantArID: 0,
-			wantErr:  true,
-			mockFunc: func() {
-			},
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			ar := arFeature{
-				config:       tt.fields.config,
-				arRepository: tt.fields.arRepository,
-			}
-
-			tt.mockFunc()
-			gotArID, err := ar.CreateData(tt.args.ctx, tt.args.request)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("arFeature.CreateData() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if gotArID != tt.wantArID {
-				t.Errorf("arFeature.CreateData() = %v, want %v", gotArID, tt.wantArID)
-			}
-		})
-	}
-}
-
 func Test_arFeature_DeleteData(t *testing.T) {
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()
@@ -521,7 +288,7 @@ func Test_arFeature_DeleteData(t *testing.T) {
 			},
 			wantErr: false,
 			mockFunc: func() {
-				mockRepo.EXPECT().GetOneData(gomock.Any(), gomock.Any()).Return(model.ARResponse{}, nil)
+				mockRepo.EXPECT().GetOneData(gomock.Any(), gomock.Any()).Return(model.AR{}, nil)
 				mockRepo.EXPECT().DeleteData(gomock.Any(), gomock.Any()).Return(nil)
 			},
 		},
@@ -536,7 +303,7 @@ func Test_arFeature_DeleteData(t *testing.T) {
 			},
 			wantErr: true,
 			mockFunc: func() {
-				mockRepo.EXPECT().GetOneData(gomock.Any(), gomock.Any()).Return(model.ARResponse{}, errors.New("Error"))
+				mockRepo.EXPECT().GetOneData(gomock.Any(), gomock.Any()).Return(model.AR{}, errors.New("Error"))
 			},
 		},
 		{
@@ -550,7 +317,7 @@ func Test_arFeature_DeleteData(t *testing.T) {
 			},
 			wantErr: true,
 			mockFunc: func() {
-				mockRepo.EXPECT().GetOneData(gomock.Any(), gomock.Any()).Return(model.ARResponse{}, nil)
+				mockRepo.EXPECT().GetOneData(gomock.Any(), gomock.Any()).Return(model.AR{}, nil)
 				mockRepo.EXPECT().DeleteData(gomock.Any(), gomock.Any()).Return(errors.New("Error"))
 			},
 		},
@@ -565,7 +332,7 @@ func Test_arFeature_DeleteData(t *testing.T) {
 			},
 			wantErr: true,
 			mockFunc: func() {
-				mockRepo.EXPECT().GetOneData(gomock.Any(), gomock.Any()).Return(model.ARResponse{
+				mockRepo.EXPECT().GetOneData(gomock.Any(), gomock.Any()).Return(model.AR{
 					Status: 1,
 				}, nil)
 			},
@@ -637,7 +404,7 @@ func Test_arFeature_UpdateData(t *testing.T) {
 			wantErr:  false,
 			wantResp: true,
 			mockFunc: func() {
-				mockRepo.EXPECT().GetOneData(gomock.Any(), gomock.Any()).Return(model.ARResponse{Status: 0}, nil)
+				mockRepo.EXPECT().GetOneData(gomock.Any(), gomock.Any()).Return(model.AR{Status: 0}, nil)
 				mockRepo.EXPECT().UpdateData(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(true, nil)
 			},
 		},
@@ -659,7 +426,7 @@ func Test_arFeature_UpdateData(t *testing.T) {
 			wantErr:  true,
 			wantResp: false,
 			mockFunc: func() {
-				mockRepo.EXPECT().GetOneData(gomock.Any(), gomock.Any()).Return(model.ARResponse{}, errors.New("error"))
+				mockRepo.EXPECT().GetOneData(gomock.Any(), gomock.Any()).Return(model.AR{}, errors.New("error"))
 			},
 		},
 		{
@@ -680,7 +447,7 @@ func Test_arFeature_UpdateData(t *testing.T) {
 			wantErr:  true,
 			wantResp: false,
 			mockFunc: func() {
-				mockRepo.EXPECT().GetOneData(gomock.Any(), gomock.Any()).Return(model.ARResponse{Status: 0}, nil)
+				mockRepo.EXPECT().GetOneData(gomock.Any(), gomock.Any()).Return(model.AR{Status: 0}, nil)
 				mockRepo.EXPECT().UpdateData(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(false, errors.New("error"))
 			},
 		},
@@ -702,7 +469,7 @@ func Test_arFeature_UpdateData(t *testing.T) {
 			wantErr:  true,
 			wantResp: false,
 			mockFunc: func() {
-				mockRepo.EXPECT().GetOneData(gomock.Any(), gomock.Any()).Return(model.ARResponse{Status: 1}, nil)
+				mockRepo.EXPECT().GetOneData(gomock.Any(), gomock.Any()).Return(model.AR{Status: 1}, nil)
 			},
 		},
 	}

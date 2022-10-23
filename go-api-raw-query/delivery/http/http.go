@@ -24,11 +24,9 @@ func ServerHttp(handler handler) *fiber.App {
 	{
 		ar.Get("/list", handler.arHandler.GetArList)
 		ar.Get("/", handler.arHandler.GetOneAr)
-		ar.Post("/", handler.arHandler.CreateData)
 		ar.Delete("/", handler.arHandler.DeleteAr)
 		ar.Patch("/", handler.arHandler.UpdateAr)
 		ar.Put("/", handler.arHandler.UpdateArStatus)
-		ar.Get("/sales", handler.arHandler.GetOneSales)
 		ar.Get("/company", handler.arHandler.GetAllCompanyCode)
 	}
 

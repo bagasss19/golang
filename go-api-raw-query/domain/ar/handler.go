@@ -14,9 +14,7 @@ import (
 type ArHandler interface {
 	GetArList(c *fiber.Ctx) error
 	GetOneAr(c *fiber.Ctx) error
-	GetOneSales(c *fiber.Ctx) error
 	GetAllCompanyCode(c *fiber.Ctx) error
-	CreateData(c *fiber.Ctx) error
 	DeleteAr(c *fiber.Ctx) error
 	UpdateAr(c *fiber.Ctx) error
 	UpdateArStatus(c *fiber.Ctx) error
@@ -51,32 +49,34 @@ func NewArHandler(arFeature feature.ArFeature) ArHandler {
 // @Router       /ar/list [get]
 func (ah arHandler) GetArList(c *fiber.Ctx) error {
 	ctx := context.CreateContext()
-	companyID := c.Query("company_id")
-	docDate := c.Query("doc_date")
-	postingDate := c.Query("posting_date")
-	description := c.Query("description")
-	salesID, _ := strconv.Atoi(c.Query("sales_id"))
-	outletID, _ := strconv.Atoi(c.Query("outlet_id"))
-	collectorID, _ := strconv.Atoi(c.Query("collector_id"))
-	bankID, _ := strconv.Atoi(c.Query("bank_id"))
-	page, _ := strconv.Atoi(c.Query("page"))
-	limit, _ := strconv.Atoi(c.Query("limit"))
-	filter := model.ARFilterList{
-		CompanyID:   companyID,
-		DocDate:     docDate,
-		PostingDate: postingDate,
-		Description: description,
-		SalesID:     int64(salesID),
-		OutletID:    int64(outletID),
-		CollectorID: int64(collectorID),
-		BankID:      int64(bankID),
-		Page:        int64(page),
-		Limit:       int64(limit),
-	}
+	var filter model.ARFilterList
+	// companyID := c.Query("company_id")
+	// docDate := c.Query("doc_date")
+	// postingDate := c.Query("posting_date")
+	// description := c.Query("description")
+	// salesID, _ := strconv.Atoi(c.Query("sales_id"))
+	// outletID, _ := strconv.Atoi(c.Query("outlet_id"))
+	// collectorID, _ := strconv.Atoi(c.Query("collector_id"))
+	// bankID, _ := strconv.Atoi(c.Query("bank_id"))
+	// page, _ := strconv.Atoi(c.Query("page"))
+	// limit, _ := strconv.Atoi(c.Query("limit"))
+
+	// filter := model.ARFilterList{
+	// 	CompanyCode: companyID,
+	// 	DocDate:     docDate,
+	// 	PostingDate: postingDate,
+	// 	Description: description,
+	// 	SalesID:     int64(salesID),
+	// 	OutletID:    int64(outletID),
+	// 	CollectorID: int64(collectorID),
+	// 	BankID:      int64(bankID),
+	// 	Page:        int64(page),
+	// 	Limit:       int64(limit),
+	// }
 
 	if err := c.QueryParser(filter); err != nil {
 		log.Println(err)
-		response.ResponseError(c, "service error", err)
+		response.ResponseErrorBadRequest(c, "bad request, check your payload", err)
 	}
 
 	resp, err := ah.arFeature.GetAllData(ctx, &filter)
@@ -98,30 +98,14 @@ func (ah arHandler) GetArList(c *fiber.Ctx) error {
 // @Router       /ar [get]
 func (ah arHandler) GetOneAr(c *fiber.Ctx) error {
 	ctx := context.CreateContext()
-	arID, _ := strconv.Atoi(c.Query("ar_id"))
+	arID, err := strconv.Atoi(c.Query("ar_id"))
 
-	resp, err := ah.arFeature.GetOneData(ctx, int64(arID))
 	if err != nil {
 		log.Println(err)
-		return response.ResponseError(c, "service error", err)
+		response.ResponseErrorBadRequest(c, "bad request, check your payload", err)
 	}
 
-	return response.ResponseOK(c, "OK!", resp)
-}
-
-// Get Sales godoc
-// @Summary      Get one Sales Data
-// @Description  show Sales by sales ID
-// @Tags         Account Receivable
-// @Param        sales_id   query      string  true  "Sales ID"
-// @Success      200  {object}  response.Response
-// @Failure      500  {object}  response.Response
-// @Router       /ar/sales [get]
-func (ah arHandler) GetOneSales(c *fiber.Ctx) error {
-	ctx := context.CreateContext()
-	salesID, _ := strconv.Atoi(c.Query("sales_id"))
-
-	resp, err := ah.arFeature.GetOneDataSales(ctx, int64(salesID))
+	resp, err := ah.arFeature.GetOneData(ctx, int64(arID))
 	if err != nil {
 		log.Println(err)
 		return response.ResponseError(c, "service error", err)
@@ -141,31 +125,6 @@ func (ah arHandler) GetAllCompanyCode(c *fiber.Ctx) error {
 	ctx := context.CreateContext()
 
 	resp, err := ah.arFeature.GetAllCompanyCode(ctx)
-	if err != nil {
-		log.Println(err)
-		return response.ResponseError(c, "service error", err)
-	}
-
-	return response.ResponseOK(c, "OK!", resp)
-}
-
-// Create AR godoc
-// @Summary      Create AR
-// @Description  Create AR
-// @Tags         Account Receivable
-// @Param        payload    body   model.ARRequest  true  "body payload"
-// @Success      200  {object}  response.Response
-// @Failure      500  {object}  response.Response
-// @Router       /ar [post]
-func (ah arHandler) CreateData(c *fiber.Ctx) error {
-	ctx := context.CreateContext()
-	var request model.ARRequest
-	if err := c.BodyParser(&request); err != nil {
-		log.Println(err)
-		return response.ResponseError(c, "Bad Request", err)
-	}
-
-	resp, err := ah.arFeature.CreateData(ctx, request)
 	if err != nil {
 		log.Println(err)
 		return response.ResponseError(c, "service error", err)

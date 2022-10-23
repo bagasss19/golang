@@ -70,7 +70,7 @@ func ResponseErrorWithContext(ctx context.Context, err error) error {
 
 	var (
 		errType    string
-		statusCode = http.StatusBadRequest
+		statusCode = http.StatusBadGateway
 	)
 
 	errType, err = Error.TrimMesssage(err)
@@ -92,4 +92,15 @@ func ResponseErrorWithContext(ctx context.Context, err error) error {
 	c := Shared.GetValueFiberFromContext(ctx)
 
 	return c.Status(statusCode).JSON(response)
+}
+
+// ErrorBadRequestFromError write response with error argument
+func ResponseErrorBadRequest(c *fiber.Ctx, msg string, err error) error {
+	response := Response{
+		Status:  constant.ERROR,
+		Message: fmt.Sprintf("%s: %s", msg, err.Error()),
+		Data:    nil,
+	}
+
+	return c.Status(http.StatusBadRequest).JSON(response)
 }

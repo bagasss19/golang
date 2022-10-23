@@ -7,50 +7,71 @@ import (
 )
 
 type AR struct {
-	ARID         int64        `db:"ar_id"`
-	CompanyID    string       `db:"company_id"`
-	DocNumber    int64        `db:"doc_number"`
-	DocDate      sql.NullTime `db:"doc_date"`
-	PostingDate  sql.NullTime `db:"posting_date"`
-	SalesID      int64        `db:"sales_id"`
-	OutletID     int64        `db:"outlet_id"`
-	CollectiorID int64        `db:"collector_id"`
-	BankID       int64        `db:"bank_id"`
-	Description  string       `db:"description"`
-	Status       int64        `db:"status"`
-	CreatedTime  sql.NullTime `db:"created_time"`
-	LastUpdate   sql.NullTime `db:"last_update"`
-	CreatedBy    string       `db:"created_by"`
-	UpdatedBy    string       `db:"updated_by"`
+	ARID              int64        `db:"ar_id"`
+	CompanyCode       string       `db:"company_code"`
+	DocDate           sql.NullTime `db:"doc_date"`
+	PostingDate       sql.NullTime `db:"posting_date"`
+	SalesID           int64        `db:"sales_id"`
+	OutletID          int64        `db:"outlet_id"`
+	CollectorID       int64        `db:"collector_id"`
+	BankID            int64        `db:"bank_id"`
+	Description       string       `db:"description"`
+	InvoiceNumber     int64        `db:"invoice_number"`
+	InvoiceType       string       `db:"invoice_type"`
+	InvoiceDate       sql.NullTime `db:"Invoice_date"`
+	InvoiceValue      float64      `db:"invoice_value"`
+	TotalPayment      float64      `db:"total_payment"`
+	DiscountPayment   float64      `db:"discount_payment"`
+	CashPayment       float64      `db:"cash_payment"`
+	GiroNumber        int64        `db:"giro_number"`
+	GiroPayment       float64      `db:"giro_payment"`
+	TransferNumber    int64        `db:"transfer_number"`
+	TransferPayment   float64      `db:"transfer_payment"`
+	CNDNNumber        int64        `db:"cndn_number"`
+	CNDNPayment       float64      `db:"cndn_payment"`
+	ReturnNumber      int64        `db:"return_number"`
+	ReturnPayment     float64      `db:"return_payment"`
+	DownPaymentNumber int64        `db:"down_payment_number"`
+	DownPayment       float64      `db:"down_payment"`
+	Status            int64        `db:"status"`
+	CreatedTime       sql.NullTime `db:"created_time"`
+	LastUpdate        sql.NullTime `db:"last_update"`
+	CreatedBy         string       `db:"created_by"`
+	UpdatedBy         string       `db:"updated_by"`
 }
 
 type ARRequest struct {
-	CompanyID      string  `json:"company_id"`
-	DocNumber      int64   `json:"doc_number"`
-	DocDate        string  `json:"doc_date" example:"2020-12-19"`
-	PostingDate    string  `json:"posting_date" example:"2020-12-19"`
-	SalesID        int64   `json:"sales_id"`
-	OutletID       int64   `json:"outlet_id"`
-	CollectiorID   int64   `json:"collector_id"`
-	BankID         int64   `json:"bank_id"`
-	Description    string  `json:"description"`
-	TransactionID  int64   `json:"transaction_id"`
-	Invoice        string  `json:"invoice" example:"2020-12-19"`
-	DiscPayment    float64 `json:"disc_payment"`
-	CashPayment    float64 `json:"cash_payment"`
-	GiroNumber     int64   `json:"giro_number"`
-	GiroAmount     float64 `json:"giro_amount"`
-	TransferNumber int64   `json:"transfer_number"`
-	TransferAmount float64 `json:"transfer_amount"`
-	CNDNNumber     int64   `json:"cndn_number"`
-	CNDNAmount     float64 `json:"cndn_amount"`
-	ReturnNumber   int64   `json:"return_number"`
-	ReturnAmount   float64 `json:"return_amount"`
-	Status         int64   `json:"status"`
-	CreatedBy      string  `json:"created_by" example:"bagas"`
-	CreatedTime    string  `db:"created_time"`
-	LastUpdate     string  `db:"last_update"`
-	UpdatedBy      string  `json:"updated_by"`
+	ARID              int64   `db:"ar_id"`
+	CompanyCode       string  `db:"company_code"`
+	DocDate           string  `db:"doc_date"`
+	PostingDate       string  `db:"posting_date"`
+	SalesID           int64   `db:"sales_id"`
+	OutletID          int64   `db:"outlet_id"`
+	CollectorID       int64   `db:"collector_id"`
+	BankID            int64   `db:"bank_id"`
+	Description       string  `db:"description"`
+	InvoiceNumber     int64   `db:"invoice_number"`
+	InvoiceType       string  `db:"invoice_type"`
+	InvoiceDate       string  `db:"Invoice_date"`
+	InvoiceValue      float64 `db:"invoice_value"`
+	TotalPayment      float64 `db:"total_payment"`
+	DiscountPayment   float64 `db:"discount_payment"`
+	CashPayment       float64 `db:"cash_payment"`
+	GiroNumber        int64   `db:"giro_number"`
+	GiroPayment       float64 `db:"giro_payment"`
+	TransferNumber    int64   `db:"transfer_number"`
+	TransferPayment   float64 `db:"transfer_payment"`
+	CNDNNumber        int64   `db:"cndn_number"`
+	CNDNPayment       float64 `db:"cndn_payment"`
+	ReturnNumber      int64   `db:"return_number"`
+	ReturnPayment     float64 `db:"return_payment"`
+	DownPaymentNumber int64   `db:"down_payment_number"`
+	DownPayment       float64 `db:"down_payment"`
+	Status            int64   `db:"status"`
+	CreatedTime       string  `db:"created_time"`
+	LastUpdate        string  `db:"last_update"`
+	CreatedBy         string  `db:"created_by"`
+	UpdatedBy         string  `db:"updated_by"`
 }
 
 func NewAR(request ARRequest) (arModel AR, err error) {
@@ -64,8 +85,16 @@ func NewAR(request ARRequest) (arModel AR, err error) {
 		return arModel, err
 	}
 
-	arModel.CompanyID = request.CompanyID
-	arModel.DocNumber = request.DocNumber
+	invoiceDate, err := time.Parse(constant.TimeFormat, request.InvoiceDate)
+	if err != nil {
+		return arModel, err
+	}
+
+	arModel.CompanyCode = request.CompanyCode
+	arModel.InvoiceDate = sql.NullTime{
+		Time:  invoiceDate,
+		Valid: true,
+	}
 	arModel.DocDate = sql.NullTime{
 		Time:  docDate,
 		Valid: true,
@@ -76,7 +105,7 @@ func NewAR(request ARRequest) (arModel AR, err error) {
 	}
 	arModel.SalesID = request.SalesID
 	arModel.OutletID = request.OutletID
-	arModel.CollectiorID = request.CollectiorID
+	arModel.CollectorID = request.CollectorID
 	arModel.BankID = request.BankID
 	arModel.Description = request.Description
 	arModel.Status = request.Status
@@ -108,99 +137,22 @@ func NewAR(request ARRequest) (arModel AR, err error) {
 	return arModel, nil
 }
 
-type ARDetail struct {
-	ARDetID        int64        `db:"ar_det_id"`
-	ARID           int64        `db:"ar_id"`
-	TransactionID  int64        `db:"transaction_id"`
-	Invoice        sql.NullTime `db:"invoice"`
-	TotalPayment   float64      `db:"total_payment"`
-	DiscPayment    float64      `db:"disc_payment"`
-	CashPayment    float64      `db:"cash_payment"`
-	GiroNumber     int64        `db:"giro_num"`
-	GiroAmount     float64      `db:"giro_amount"`
-	TransferNumber int64        `db:"transfer_num"`
-	TransferAmount float64      `db:"transfer_amount"`
-	CNDNNumber     int64        `db:"cndn_num"`
-	CNDNAmount     float64      `db:"cndn_amount"`
-	ReturnNumber   int64        `db:"return_num"`
-	ReturnAmount   float64      `db:"return_amount"`
-	Status         int64        `db:"status"`
-}
-
-func NewARDetail(request ARRequest) (arDetailModel ARDetail, err error) {
-	arDetailModel.TransactionID = request.TransactionID
-	invoice, err := time.Parse(constant.TimeFormat, request.Invoice)
-	if err != nil {
-		return arDetailModel, err
-	}
-	arDetailModel.Invoice = sql.NullTime{
-		Time:  invoice,
-		Valid: true,
-	}
-	totalPayment := request.DiscPayment + request.CashPayment + request.GiroAmount + request.CNDNAmount + request.ReturnAmount
-	arDetailModel.TotalPayment = totalPayment
-	arDetailModel.DiscPayment = request.DiscPayment
-	arDetailModel.CashPayment = request.CashPayment
-	arDetailModel.GiroNumber = request.GiroNumber
-	arDetailModel.GiroAmount = request.GiroAmount
-	arDetailModel.TransferNumber = request.TransferNumber
-	arDetailModel.TransferAmount = request.TransferAmount
-	arDetailModel.CNDNNumber = request.CNDNNumber
-	arDetailModel.CNDNAmount = request.CNDNAmount
-	arDetailModel.ReturnNumber = request.ReturnNumber
-	arDetailModel.ReturnAmount = request.ReturnAmount
-	arDetailModel.Status = request.Status
-	return arDetailModel, nil
-}
-
-type ARResponse struct {
-	ARID           int64        `db:"ar_id"`
-	CompanyID      string       `db:"company_id"`
-	DocNumber      int64        `db:"doc_number"`
-	DocDate        sql.NullTime `db:"doc_date"`
-	PostingDate    sql.NullTime `db:"posting_date"`
-	SalesID        int64        `db:"sales_id"`
-	OutletID       int64        `db:"outlet_id"`
-	CollectiorID   int64        `db:"collector_id"`
-	BankID         int64        `db:"bank_id"`
-	Description    string       `db:"description"`
-	ARDetID        int64        `db:"ar_det_id"`
-	TransactionID  int64        `db:"transaction_id"`
-	Invoice        sql.NullTime `db:"invoice"`
-	TotalPayment   float64      `db:"total_payment"`
-	DiscPayment    float64      `db:"disc_payment"`
-	CashPayment    float64      `db:"cash_payment"`
-	GiroNumber     int64        `db:"giro_num"`
-	GiroAmount     float64      `db:"giro_amount"`
-	TransferNumber int64        `db:"transfer_num"`
-	TransferAmount float64      `db:"transfer_amount"`
-	CNDNNumber     int64        `db:"cndn_num"`
-	CNDNAmount     float64      `db:"cndn_amount"`
-	ReturnNumber   int64        `db:"return_num"`
-	ReturnAmount   float64      `db:"return_amount"`
-	CreatedTime    sql.NullTime `db:"created_time"`
-	LastUpdate     sql.NullTime `db:"last_update"`
-	CreatedBy      string       `db:"created_by"`
-	UpdatedBy      string       `db:"updated_by"`
-	Status         int64        `db:"status"`
-}
-
 type ARFilterList struct {
-	CompanyID   string `query:"company_id"`
-	DocDate     string `query:"doc_date"`
-	PostingDate string `query:"posting_date"`
-	SalesID     int64  `query:"sales_id"`
-	OutletID    int64  `query:"outlet_id"`
-	CollectorID int64  `query:"collector_id"`
-	BankID      int64  `query:"bank_id"`
-	Description string `query:"description"`
+	CompanyCode string `db:"company_code" query:"company_code"`
+	DocDate     string `db:"doc_date" query:"company_code"`
+	PostingDate string `db:"posting_date" query:"posting_date"`
+	SalesID     int64  `db:"sales_id" query:"sales_id"`
+	OutletID    int64  `db:"outlet_id" query:"outlet_id"`
+	CollectorID int64  `db:"collector_id" query:"collector_id"`
+	BankID      int64  `db:"bank_id" query:"bank_id"`
+	Description string `db:"description" query:"description"`
 	Page        int64  `query:"page"`
 	Limit       int64  `query:"limit"`
 	Offset      int64  //payload for repository
 }
 
 type GetAllARResponse struct {
-	Data      []ARResponse
+	Data      []AR
 	TotalPage int64
 	TotalItem int64
 	Page      int64
@@ -210,19 +162,20 @@ type GetAllARResponse struct {
 }
 
 type ARUpdate struct {
-	TotalPayment   float64 `json:"total_payment"`
-	DiscPayment    float64 `json:"disc_payment"`
-	CashPayment    float64 `json:"cash_payment"`
-	GiroNumber     int64   `json:"giro_number"`
-	GiroAmount     float64 `json:"giro_amount"`
-	TransferNumber int64   `json:"transfer_number"`
-	TransferAmount float64 `json:"transfer_amount"`
-	CNDNNumber     int64   `json:"cndn_number"`
-	CNDNAmount     float64 `json:"cndn_amount"`
-	ReturnNumber   int64   `json:"return_number"`
-	ReturnAmount   float64 `json:"return_amount"`
-	Status         int64   `json:"status"`
-	UpdatedBy      string  `json:"updated_by"`
+	InvoiceType       string  `json:"invoice_type"`
+	InvoiceValue      float64 `json:"invoice_value"`
+	TotalPayment      float64 `json:"total_payment"`
+	DiscountPayment   float64 `json:"discount_payment"`
+	CashPayment       float64 `json:"cash_payment"`
+	GiroNumber        int64   `json:"giro_number"`
+	CNDNNumber        int64   `json:"cndn_number"`
+	CNDNPayment       float64 `json:"cndn_payment"`
+	ReturnNumber      int64   `json:"return_number"`
+	ReturnPayment     float64 `json:"return_payment"`
+	DownPaymentNumber int64   `db:"down_payment_number"`
+	DownPayment       float64 `db:"down_payment"`
+	Status            int64   `json:"status"`
+	UpdatedBy         string  `json:"updated_by"`
 }
 
 type ARUpdatePayload struct {
