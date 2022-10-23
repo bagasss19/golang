@@ -79,7 +79,7 @@ func Test_arRepository_GetAllData(t *testing.T) {
 		name     string
 		fields   fields
 		args     args
-		wantData []model.ARResponse
+		wantData []model.AR
 		wantErr  bool
 		mockFunc func(args)
 	}{
@@ -109,96 +109,6 @@ func Test_arRepository_GetAllData(t *testing.T) {
 			_, err := ar.GetAllData(tt.args.ctx, tt.args.payload)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("arRepository.GetAllData() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-		})
-	}
-}
-
-func Test_arRepository_GetOneDataSales(t *testing.T) {
-	db, mock, err := sqlmock.New()
-	if err != nil {
-		t.Errorf("an error '%s' was not expected when opening a stub database connection", err)
-	}
-	assert.NoError(t, err)
-	defer db.Close()
-	sqlxDB := sqlx.NewDb(db, "sqlmock")
-	query := `
-	SELECT
-		sales_id,
-		company_code,
-		gl_account,
-		clearing_date,
-		clearing_document,
-		assignment,
-		fiscal_year,
-		document_number,
-		line_item,
-		posting_date,
-		document_date,
-		currency,
-		reference,
-		document_type,
-		posting_period,
-		posting_key,
-		debit_credit,
-		amount_in_local,
-		amount,
-		text,
-		cost_center,
-		baseline_payment_date,
-		open_item,
-		value_date,
-		document_status,
-		gl_currency,
-		profit_center,
-		gl_amount,
-		clearing_year
-	FROM
-		ar_sales
-	WHERE
-		sales_id = $1`
-
-	type fields struct {
-		database *database.Database
-	}
-	type args struct {
-		ctx     context.Context
-		salesID int64
-	}
-	tests := []struct {
-		name     string
-		fields   fields
-		args     args
-		wantData model.ARSales
-		wantErr  bool
-		mockFunc func(args)
-	}{
-		// TODO: Add test cases.
-		{
-			name: "positive case",
-			fields: fields{
-				database: &database.Database{sqlxDB},
-			},
-			args: args{
-				ctx:     context.Background(),
-				salesID: 1,
-			},
-			wantErr: false,
-			mockFunc: func(args args) {
-				mock.ExpectQuery(regexp.QuoteMeta(query)).WithArgs(args.salesID).WillReturnRows(sqlmock.NewRows([]string{"sales_id"}).AddRow(5))
-			},
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			ar := arRepository{
-				database: tt.fields.database,
-			}
-			tt.mockFunc(tt.args)
-			_, err := ar.GetOneDataSales(tt.args.ctx, tt.args.salesID)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("arRepository.GetOneDataSales() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 		})
