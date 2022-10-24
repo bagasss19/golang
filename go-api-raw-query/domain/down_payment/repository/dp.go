@@ -377,6 +377,21 @@ func (dp dpRepository) DeleteData(ctx context.Context, dpID int64) (err error) {
 	return nil
 }
 
+func (dp dpRepository) DeleteDataDetail(ctx context.Context, dpDetailID int64) (err error) {
+	query := `
+	DELETE FROM
+		ar_dp_detail
+	WHERE
+		dp_detail_id = $1`
+
+	_, err = dp.database.ExecContext(ctx, query,dpDetailID)
+	if err != nil {
+		return fmt.Errorf("[DeleteDataDetail] failed when executed query. Error: %+v", err)
+	}
+
+	return nil
+}
+
 func (dp dpRepository) UpdateData(ctx context.Context, request model.DownPaymentRequest, columns map[string]interface{}, arID int64) (resp bool, err error) {
 	var (
 		values []string

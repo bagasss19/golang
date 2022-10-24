@@ -19,6 +19,7 @@ type DPHandler interface {
 	CreateData(c *fiber.Ctx) error
 	CreateDataDetail(c *fiber.Ctx) error
 	DeleteDP(c *fiber.Ctx) error
+	DeleteDPDetail(c *fiber.Ctx) error
 	UpdateDP(c *fiber.Ctx) error
 }
 
@@ -166,6 +167,23 @@ func (d dpHandler) DeleteDP(c *fiber.Ctx) error {
 		return response.ResponseError(c, "Bad Request", err)
 	}
 	err = d.dpFeature.DeleteData(ctx, int64(dpID))
+	if err != nil {
+		log.Println(err)
+		return response.ResponseError(c, "service error", err)
+	}
+
+	return response.ResponseOK(c, "OK!", nil)
+}
+
+// TODO: create DeleteDPDetail godoc
+func (d dpHandler) DeleteDPDetail(c *fiber.Ctx) error {
+	ctx := context.CreateContext()
+	dpDetailID, err := strconv.Atoi(c.Params("dp_detail_id"))
+	if err != nil {
+		log.Println(err)
+		return response.ResponseError(c, "Bad Request", err)
+	}
+	err = d.dpFeature.DeleteDataDetail(ctx, int64(dpDetailID))
 	if err != nil {
 		log.Println(err)
 		return response.ResponseError(c, "service error", err)
