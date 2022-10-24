@@ -167,6 +167,23 @@ func (d dpFeature) DeleteData(ctx context.Context, dpID int64) (err error) {
 	return nil
 }
 
+func (d dpFeature) DeleteDataDetail(ctx context.Context, dpDetailID int64) (err error) {
+	data, err := d.dpRepository.GetOneDataDetail(ctx, dpDetailID)
+	if err != nil {
+		return err
+	}
+
+	if data.Status != 0 {
+		return errors.New("[DeleteDataDetail] you can only delete draft data")
+	}
+	err = d.dpRepository.DeleteDataDetail(ctx, dpDetailID)
+	if err != nil {
+		return err
+	}
+	
+	return nil
+}
+
 func (d dpFeature) UpdateData(ctx context.Context, request model.DPUpdatePayload, dpID int64) (resp bool, err error) {
 	var (
 		updatedDP model.DownPaymentRequest
